@@ -84,14 +84,14 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-	Speed_PID_Init_All();
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  Speed_PID_Init_All();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -101,7 +101,9 @@ int main(void)
   MX_TIM2_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  CAN_Start_IT(&hcan1);
+  HAL_TIM_Base_Start_IT(&htim2);
+  __HAL_UART_ENABLE_IT(&huart1,UART_IT_IDLE);
   /* USER CODE END 2 */
 
   /* Infinite loop */
