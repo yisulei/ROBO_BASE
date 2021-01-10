@@ -1,13 +1,16 @@
 #include "remote.h"
-#include "robo_base.h"
 #include <stdlib.h>
 
-extern uint8_t Tx_Data[8];
-extern uint8_t Rx_Data[8];
+CAN_RxHeaderTypeDef RxHeader;
+Speed_System Speed_Motor;
+UART_RX_BUFFER Uart1_Rx;
 extern BASE base;
-extern Speed_System Speed_Motor;
-extern CAN_RxHeaderTypeDef RxHeader;
-extern uint16_t Motor_Num;
+
+uint8_t Tx_Data[8];
+uint8_t Rx_Data[8];
+uint16_t Motor_Num;
+
+
 RC_Ctl_t RC_CtrlData={
 	{1024,1024,1024,1024,2,2},
 	{0},
@@ -79,19 +82,10 @@ void Usart_All_Init(void)
 	HAL_UART_Receive_DMA(&huart1, Uart1_Rx.Buffer[0], USART1_RX_LEN_MAX);
 }
 
-void Speed_PID_Init_All(void)
-{
-	PID_Init(&base.MotorLB.Speed_PID,0.5,0,0,5000,0,5000,5000);
-	PID_Init(&base.MotorLF.Speed_PID,0.5,0,0,5000,0,5000,5000);
-	PID_Init(&base.MotorLB.Speed_PID,0.5,0,0,5000,0,5000,5000);
-	PID_Init(&base.MotorRF.Speed_PID,0.5,0,0,5000,0,5000,5000);
-}
-
 
 void Rx_Motor_All(void)
 {
 	HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0,&RxHeader,Rx_Data);
-	Motor_Num=RxHeader.StdId;
 	switch (Motor_Num)
 	{
 		case 0x201:Speed_Info_Analysis(&base.MotorLF.Info,Rx_Data);
@@ -107,21 +101,19 @@ void Rx_Motor_All(void)
 
 void Tx_Motor_All(void)
 {
-	switch (Motor_Num)
-	{
-		case 0x201:base.MotorLF.Tar_Speed=Target1-Target2;
-		          PID_Speed_Cal(&base.MotorLF,Tx_Data);
-		break;		
-		case 0x202:base.MotorRF.Tar_Speed=-Target1-Target2;
-		           PID_Speed_Cal(&base.MotorLB,Tx_Data);
-		break;		
-		case 0x203:base.MotorLB.Tar_Speed=-Target1-Target2;
-		           PID_Speed_Cal(&base.MotorRF,Tx_Data);
-		break;
-		case 0x204:base.MotorRB.Tar_Speed=-Target1+Target2;
-		           PID_Speed_Cal(&base.MotorRB,Tx_Data);
-		break;
-	}	
-	Send_To_Motor(&hcan1,Tx_Data);
+	base.MotorLF.Tar_Speed=Target1-Target2;
+	PID_Speed_Cal(&base.MotorLF,Tx_Data);
+	
+	base.MotorRF.Tar_Speed=-Target1-Target2;
+	PID_Speed_Cal(&base.MotorRF,Tx_Data);
+	
+	base.MotorLB.Tar_Speed=-Target1-Target2;
+	PID_Speed_Cal(&base.MotorLB,Tx_Data);
+	
+	base.MotorRB.Tar_Speed=-Target1+Target2;
+  PID_Speed_Cal(&base.MotorRB,Tx_Data);
+	
+	
+  Send_To_Motor(&hcan1,Tx_Data);
 }
 

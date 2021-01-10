@@ -6,7 +6,8 @@
 #define USART1_RX_LEN_MAX 18
 
 
-#include "main.h"
+#include "robo_base.h"
+#include "usart.h"
 
 typedef  struct {     
 
@@ -57,10 +58,6 @@ typedef struct UART_RX_BUFFER
 	uint8_t Buffer_Num;
 	uint16_t Length_Max;
 }UART_RX_BUFFER;
-
-extern UART_RX_BUFFER Uart1_Rx;
-extern UART_HandleTypeDef huart1;
-extern DMA_HandleTypeDef hdma_usart1_rx;
 
 
 void Usart_All_Init(void);

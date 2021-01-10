@@ -389,3 +389,17 @@ uint8_t System_Check(Protect_System* Dogs)
   }else SystemState_Set(Dogs,MISSING);
   return 1;
 }
+
+//底盘4个电机的初始化
+BASE base;
+void Speed_PID_Init_All(void)
+{
+	PID_Init(&base.MotorLF.Speed_PID,5,0,0,5000,0,5000,5000);
+	PID_Init(&base.MotorRF.Speed_PID,5,0,0,5000,0,5000,5000);
+	PID_Init(&base.MotorLB.Speed_PID,5,0,0,5000,0,5000,5000);
+	PID_Init(&base.MotorRB.Speed_PID,5,0,0,5000,0,5000,5000);
+	base.MotorLF.Motor_Num=1;
+	base.MotorRF.Motor_Num=2;
+	base.MotorLB.Motor_Num=3;
+	base.MotorRB.Motor_Num=4;
+}

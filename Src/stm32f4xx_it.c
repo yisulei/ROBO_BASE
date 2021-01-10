@@ -25,10 +25,15 @@
 /* USER CODE BEGIN Includes */
 #include "remote.h"
 #include "robo_base.h"
+#include "usart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
+extern DMA_HandleTypeDef hdma_usart1_rx;
+extern TIM_HandleTypeDef htim2;
+extern CAN_RxHeaderTypeDef RxHeader;
+extern uint16_t Motor_Num;
 
 /* USER CODE END TD */
 
@@ -58,10 +63,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern CAN_HandleTypeDef hcan1;
-extern TIM_HandleTypeDef htim2;
-extern DMA_HandleTypeDef hdma_usart1_rx;
-extern UART_HandleTypeDef huart1;
+uint8_t Remote_Data[8];
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -214,6 +216,7 @@ void CAN1_RX0_IRQHandler(void)
   /* USER CODE END CAN1_RX0_IRQn 0 */
   HAL_CAN_IRQHandler(&hcan1);
   /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
+	Motor_Num=RxHeader.StdId;
 	Rx_Motor_All();
   /* USER CODE END CAN1_RX0_IRQn 1 */
 }
@@ -228,6 +231,7 @@ void TIM2_IRQHandler(void)
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
   /* USER CODE BEGIN TIM2_IRQn 1 */
+	Motor_Num=RxHeader.StdId;
 	Tx_Motor_All();
   /* USER CODE END TIM2_IRQn 1 */
 }
@@ -242,7 +246,8 @@ void USART1_IRQHandler(void)
   /* USER CODE END USART1_IRQn 0 */
   HAL_UART_IRQHandler(&huart1);
   /* USER CODE BEGIN USART1_IRQn 1 */
-	Uart_DMA_Process(&huart1,&hdma_usart1_rx,&Uart1_Rx,RemoteDataProcess);
+	HAL_UART_Receive_DMA(&huart1,Remote_Data,18);
+	RemoteDataProcess(Remote_Data);
   /* USER CODE END USART1_IRQn 1 */
 }
 
