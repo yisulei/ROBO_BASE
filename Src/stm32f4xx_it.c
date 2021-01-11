@@ -30,10 +30,11 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
+CAN_RxHeaderTypeDef RxHeader;
 extern DMA_HandleTypeDef hdma_usart1_rx;
 extern TIM_HandleTypeDef htim2;
-extern CAN_RxHeaderTypeDef RxHeader;
 extern uint16_t Motor_Num;
+extern uint8_t Rx_Data[8];
 
 /* USER CODE END TD */
 
@@ -217,6 +218,7 @@ void CAN1_RX0_IRQHandler(void)
   HAL_CAN_IRQHandler(&hcan1);
   /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
 	Motor_Num=RxHeader.StdId;
+	HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0,&RxHeader,Rx_Data);
 	Rx_Motor_All();
   /* USER CODE END CAN1_RX0_IRQn 1 */
 }

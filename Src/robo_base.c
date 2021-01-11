@@ -398,8 +398,8 @@ void Speed_PID_Init_All(void)
 	PID_Init(&base.MotorRF.Speed_PID,5,0,0,5000,0,5000,5000);
 	PID_Init(&base.MotorLB.Speed_PID,5,0,0,5000,0,5000,5000);
 	PID_Init(&base.MotorRB.Speed_PID,5,0,0,5000,0,5000,5000);
-	base.MotorLF.Motor_Num=1;
-	base.MotorRF.Motor_Num=2;
-	base.MotorLB.Motor_Num=3;
-	base.MotorRB.Motor_Num=4;
+	base.MotorLF.Motor_Num=0;
+	base.MotorRF.Motor_Num=1;
+	base.MotorLB.Motor_Num=2;
+	base.MotorRB.Motor_Num=3;
 }

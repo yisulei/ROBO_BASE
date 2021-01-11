@@ -1,13 +1,12 @@
 #include "remote.h"
 #include <stdlib.h>
 
-CAN_RxHeaderTypeDef RxHeader;
 Speed_System Speed_Motor;
 UART_RX_BUFFER Uart1_Rx;
 extern BASE base;
 
-uint8_t Tx_Data[8];
-uint8_t Rx_Data[8];
+uint8_t Tx_Data[8]={0};
+uint8_t Rx_Data[8]={0};
 uint16_t Motor_Num;
 
 
@@ -73,7 +72,6 @@ void Uart_DMA_Process(UART_HandleTypeDef *huart,DMA_HandleTypeDef* hdma_usart_rx
 
 void Usart_All_Init(void)
 {
-	
 	Uart1_Rx.Buffer[0]=(uint8_t*)malloc(sizeof(uint8_t)*USART1_RX_LEN_MAX);
 	Uart1_Rx.Buffer[1]=(uint8_t*)malloc(sizeof(uint8_t)*USART1_RX_LEN_MAX);
 	__HAL_UART_ENABLE_IT(&huart1, UART_IT_IDLE);
@@ -85,7 +83,6 @@ void Usart_All_Init(void)
 
 void Rx_Motor_All(void)
 {
-	HAL_CAN_GetRxMessage(&hcan1,CAN_RX_FIFO0,&RxHeader,Rx_Data);
 	switch (Motor_Num)
 	{
 		case 0x201:Speed_Info_Analysis(&base.MotorLF.Info,Rx_Data);
